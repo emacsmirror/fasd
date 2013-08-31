@@ -28,7 +28,7 @@ If PREFIX is non-nil consider only directories. QUERY can be
 passed optionally to avoid the prompt."
   (interactive "P")
   (if (not (executable-find "fasd"))
-      (error "Fasd executable cannot be found. It is required by `fasd.el'.")
+      (error "Fasd executable cannot be found. It is required by `fasd.el'. Cannot use `fasd-find-file'")
     (unless query (setq query (read-from-minibuffer "Fasd query: ")))
     (let* ((results
             (split-string
@@ -51,7 +51,7 @@ passed optionally to avoid the prompt."
 (defun fasd-add-file-to-db ()
   "Add current file or directory to the Fasd database."
   (if (not (executable-find "fasd"))
-      (error "Fasd executable cannot be found. It is required by `fasd.el'.")
+      (message "Fasd executable cannot be found. It is required by `fasd.el'")
     (let ((file (if (string= major-mode "dired-mode")
                     dired-directory
                   (buffer-file-name))))
