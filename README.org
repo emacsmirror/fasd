@@ -32,5 +32,3 @@ Add a shortcut key for =fasd-find-file=:
 #+END_SRC
 
 Hooks are added to =find-file-hook= and =dired-mode-hook= so that opening files or directories adds them to fasd or increases the score.
-
-** TODO melpa

@@ -3,6 +3,7 @@
 ;; Copyright (C) 2013 steckerhalter
 
 ;; Author: steckerhalter
+;; Package-Requires: ((grizzl "0"))
 ;; URL: https://github.com/steckerhalter/emacs-fasd
 ;; Keywords: cli bash zsh autojump
 
@@ -26,31 +27,35 @@
 If PREFIX is non-nil consider only directories. QUERY can be
 passed optionally to avoid the prompt."
   (interactive "P")
-  (unless query (setq query (read-from-minibuffer "Fasd query: ")))
-  (let* ((results
-          (split-string
-           (shell-command-to-string
-            (concat "fasd -l" (if prefix " -d " " -a ") query)) "\n" t))
-         (file (if (> (length results) 1)
-                   (grizzl-completing-read "Fasd query: " (grizzl-make-index results))
-                 (car results))))
-    (if file
-        (if (file-readable-p file)
-            (if (file-directory-p file)
-                (dired file)
-              (find-file file))
-          (message "Directory or file %s doesn't exist" file))
-      (message "Fasd found nothing for query %s" query)
-      )
-    ))
+  (if (not (executable-find "fasd"))
+      (error "Fasd executable cannot be found. It is required by `fasd.el'.")
+    (unless query (setq query (read-from-minibuffer "Fasd query: ")))
+    (let* ((results
+            (split-string
+             (shell-command-to-string
+              (concat "fasd -l" (if prefix " -d " " -a ") query)) "\n" t))
+           (file (if (> (length results) 1)
+                     (grizzl-completing-read "Fasd query: " (grizzl-make-index results))
+                   (car results))))
+      (if file
+          (if (file-readable-p file)
+              (if (file-directory-p file)
+                  (dired file)
+                (find-file file))
+            (message "Directory or file %s doesn't exist" file))
+        (message "Fasd found nothing for query %s" query)
+        )
+      )))
 
 ;;;###autoload
 (defun fasd-add-file-to-db ()
   "Add current file or directory to the Fasd database."
-  (let ((file (if (string= major-mode "dired-mode")
-                  dired-directory
-                (buffer-file-name))))
-    (start-process "*fasd*" nil "fasd" "--add" file)))
+  (if (not (executable-find "fasd"))
+      (error "Fasd executable cannot be found. It is required by `fasd.el'.")
+    (let ((file (if (string= major-mode "dired-mode")
+                    dired-directory
+                  (buffer-file-name))))
+      (start-process "*fasd*" nil "fasd" "--add" file))))
 
 ;;;###autoload
 (add-hook 'find-file-hook 'fasd-add-file-to-db)
