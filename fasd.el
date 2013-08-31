@@ -42,8 +42,8 @@ passed optionally to avoid the prompt."
               (if (file-directory-p file)
                   (dired file)
                 (find-file file))
-            (message "Directory or file %s doesn't exist" file))
-        (message "Fasd found nothing for query %s" query)
+            (message "Directory or file `%s' doesn't exist" file))
+        (message "Fasd found nothing for query `%s'" query)
         )
       )))
 
@@ -51,7 +51,7 @@ passed optionally to avoid the prompt."
 (defun fasd-add-file-to-db ()
   "Add current file or directory to the Fasd database."
   (if (not (executable-find "fasd"))
-      (message "Fasd executable cannot be found. It is required by `fasd.el'")
+      (message "Fasd executable cannot be found. It is required by `fasd.el'. Cannot add file/directory to the fasd db")
     (let ((file (if (string= major-mode "dired-mode")
                     dired-directory
                   (buffer-file-name))))
