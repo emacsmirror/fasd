@@ -1,4 +1,4 @@
-;;; fasd.el --- Emacs integration for the command-line productivity booster 'fasd'
+;;; fasd.el --- Emacs integration for the command-line productivity booster `fasd'
 
 ;; Copyright (C) 2013 steckerhalter
 
@@ -17,6 +17,14 @@
 ;; `fasd' command line tool, see: https://github.com/clvv/fasd
 ;; `grizzl' for fuzzy completion
 
+;;; Usage:
+
+;; (require 'fasd)
+;; (global-fasd-mode 1)
+
+;; Optionally bind `fasd-find-file' to a key:
+;; (global-set-key (kbd "C-h C-/") 'fasd-find-file)
+
 ;;; Code:
 
 (require 'grizzl)
@@ -24,11 +32,11 @@
 ;;;###autoload
 (defun fasd-find-file (prefix &optional query)
   "Use fasd to open a file, or a directory with dired.
-If PREFIX is non-nil consider only directories. QUERY can be
+If PREFIX is non-nil consider only directories.  QUERY can be
 passed optionally to avoid the prompt."
   (interactive "P")
   (if (not (executable-find "fasd"))
-      (error "Fasd executable cannot be found. It is required by `fasd.el'. Cannot use `fasd-find-file'")
+      (error "Fasd executable cannot be found.  It is required by `fasd.el'.  Cannot use `fasd-find-file'")
     (unless query (setq query (read-from-minibuffer "Fasd query: ")))
     (let* ((results
             (split-string
@@ -58,9 +66,19 @@ passed optionally to avoid the prompt."
       (start-process "*fasd*" nil "fasd" "--add" file))))
 
 ;;;###autoload
-(add-hook 'find-file-hook 'fasd-add-file-to-db)
-;;;###autoload
-(add-hook 'dired-mode-hook 'fasd-add-file-to-db)
+(define-minor-mode global-fasd-mode
+  "Toggle fasd mode globally.
+   With no argument, this command toggles the mode.
+   Non-null prefix argument turns on the mode.
+   Null prefix argument turns off the mode."
+  :global t
+
+  (if global-fasd-mode
+      (progn (add-hook 'find-file-hook 'fasd-add-file-to-db)
+             (add-hook 'dired-mode-hook 'fasd-add-file-to-db))
+    (remove-hook 'find-file-hook 'fasd-add-file-to-db)
+    (remove-hook 'dired-mode-hook 'fasd-add-file-to-db))
+  )
 
 (provide 'fasd)
 ;;; fasd.el ends here
