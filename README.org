@@ -6,7 +6,31 @@ An Emacs extension to integrate [[https://github.com/clvv/fasd][Fasd]]:
 Fasd (pronounced similar to "fast") is a command-line productivity booster. Fasd offers quick access to files and directories for POSIX shells. It is inspired by tools like autojump, z and v. Fasd keeps track of files and directories you have accessed, so that you can quickly reference them in the command line.
 #+END_QUOTE
 
-** TODO file find hook
-** TODO grizzl completion read
+*** Prerequisites
+
+- fasd
+
+  https://github.com/clvv/fasd
+
+
+*** Installation
+
+**** El-Get
+
+#+BEGIN_SRC emacs-lisp
+  (:name fasd
+         :type git
+         :url "https://github.com/steckerhalter/emacs-fasd")
+#+END_SRC
+
+*** Usage
+
+Add a shortcut key for =fasd-find-file=:
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-h C-/") 'fasd-find-file)
+#+END_SRC
+
+Hooks are added to =find-file-hook= and =dired-mode-hook= so that opening files or directories adds them to fasd or increases the score.
+
 ** TODO melpa
-** TODO documentation

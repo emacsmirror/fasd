@@ -28,7 +28,9 @@ passed optionally to avoid the prompt."
   (interactive "P")
   (unless query (setq query (read-from-minibuffer "Fasd query: ")))
   (let* ((results
-          (split-string (shell-command-to-string (concat "fasd -a -l " query)) "\n" t))
+          (split-string
+           (shell-command-to-string
+            (concat "fasd -l" (if prefix " -d " " -a ") query)) "\n" t))
          (file (if (> (length results) 1)
                    (grizzl-completing-read "Fasd query: " (grizzl-make-index results))
                  (car results))))
