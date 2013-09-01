@@ -15,6 +15,21 @@ Fasd (pronounced similar to "fast") is a command-line productivity booster. Fasd
 
 *** Installation
 
+**** MELPA
+
+You can install =fasd.el= using the packages on [[http://melpa.milkbox.net/][Melpa]].
+
+Make sure you have something like the following in your Emacs startup file (=~/.emacs.d/init.el=, or =~/.emacs=):
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.milkbox.net/packages/"))
+#+END_SRC
+
+To make that take effect, either evaluate that elisp expression or restart Emacs.
+
+Then use M-x package-list-packages, select =fasd= from the list by pressing i, then press x to execute the changes. At that point, the package will be installed.
+
 **** El-Get
 
 #+BEGIN_SRC emacs-lisp
@@ -25,7 +40,7 @@ Fasd (pronounced similar to "fast") is a command-line productivity booster. Fasd
 
 *** Usage
 
-Add a shortcut key for =fasd-find-file= and enable the =global-fasd-mode= which makes sure that opening of files or directories in Emacs updates the fasd database.
+Add a shortcut key for =fasd-find-file= and enable the =global-fasd-mode= which makes sure that opening files or directories in Emacs updates the fasd database.
 
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "C-h C-/") 'fasd-find-file)
