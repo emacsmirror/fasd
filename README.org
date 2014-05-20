@@ -48,10 +48,16 @@ Then use M-x package-list-packages, select =fasd= from the list by pressing i, t
 
 **** El-Get
 
+Example recipe for el-get:
+
 #+BEGIN_SRC emacs-lisp
-  (:name fasd
-         :type git
-         :url "https://github.com/steckerhalter/emacs-fasd")
+(:name fasd
+       :type github
+       :url "https://github.com/steckerhalter/emacs-fasd"
+       :depends (grizzl)
+       :postinit (progn
+                   (global-set-key (kbd "C-h C-/") 'fasd-find-file)
+                   (global-fasd-mode 1)))
 #+END_SRC
 
 *** Usage
