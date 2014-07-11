@@ -29,6 +29,16 @@
 
 (require 'grizzl)
 
+(defgroup fasd nil
+  "Navigate previously-visited files and directories easily"
+  :group 'tools
+  :group 'convenience)
+
+(defcustom fasd-enable-initial-prompt t
+  "Specify whether to enable prompt for the initial query.
+
+When set to nil, all fasd results are returned for completion")
+
 ;;;###autoload
 (defun fasd-find-file (prefix &optional query)
   "Use fasd to open a file, or a directory with dired.
@@ -37,7 +47,9 @@ passed optionally to avoid the prompt."
   (interactive "P")
   (if (not (executable-find "fasd"))
       (error "Fasd executable cannot be found.  It is required by `fasd.el'.  Cannot use `fasd-find-file'")
-    (unless query (setq query (read-from-minibuffer "Fasd query: ")))
+    (unless query (setq query (if fasd-enable-initial-prompt
+                                  (read-from-minibuffer "Fasd query: ")
+                                "")))
     (let* ((results
             (split-string
              (shell-command-to-string
