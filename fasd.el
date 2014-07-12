@@ -84,6 +84,7 @@ passed optionally to avoid the prompt."
    Non-null prefix argument turns on the mode.
    Null prefix argument turns off the mode."
   :global t
+  :group 'fasd
 
   (if global-fasd-mode
       (progn (add-hook 'find-file-hook 'fasd-add-file-to-db)
