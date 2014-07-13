@@ -39,6 +39,13 @@
 
 When set to nil, all fasd results are returned for completion")
 
+(defcustom fasd-completing-read-function 'grizzl-completing-read
+  "The completion function to use for `fasd' completion.
+Default is `grizzl-completing-read'.  If set to `nil' it will
+fall back to the standard `completing-read-function', which could
+be using `helm' or `ido' depending on what you are using.  To use
+e.g. `ido' explicitly set it to `ido-completing-read'.")
+
 ;;;###autoload
 (defun fasd-find-file (prefix &optional query)
   "Use fasd to open a file, or a directory with dired.
@@ -50,12 +57,19 @@ passed optionally to avoid the prompt."
     (unless query (setq query (if fasd-enable-initial-prompt
                                   (read-from-minibuffer "Fasd query: ")
                                 "")))
-    (let* ((results
+    (let* ((prompt "Fasd query: ")
+           (results
             (split-string
              (shell-command-to-string
               (concat "fasd -l" (if prefix " -d " " -a ") query)) "\n" t))
            (file (if (> (length results) 1)
-                     (grizzl-completing-read "Fasd query: " (grizzl-make-index results))
+                     (pcase fasd-completing-read-function
+                       (`grizzl-completing-read (grizzl-completing-read prompt (grizzl-make-index results)))
+                       (function
+                        (let ((completing-read-function
+                               (or fasd-completing-read-function
+                                   completing-read-function)))
+                          (completing-read prompt results nil t))))
                    (car results))))
       (if file
           (if (file-readable-p file)
