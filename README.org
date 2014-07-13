@@ -68,3 +68,17 @@ Add a shortcut key for =fasd-find-file= and enable the =global-fasd-mode= which 
   (global-set-key (kbd "C-h C-/") 'fasd-find-file)
   (global-fasd-mode 1)
 #+END_SRC
+
+**** Options
+
+Use the customize interface:
+
+=M-x customize-group RET fasd RET=
+
+***** Initial Prompt
+
+Usually =fasd= will prompt for a initial query. To turn that off and get all results directly, set =fasd-enable-initial-prompt= to =nil=.
+
+***** Completion Function
+
+The default completion uses =grizzl=. If you want to use =ido=, =helm= or something else, customize =fasd-completing-read-function=.
