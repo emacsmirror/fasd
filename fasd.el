@@ -67,7 +67,7 @@ passed optionally to avoid the prompt."
                        (`grizzl-completing-read (grizzl-completing-read prompt (grizzl-make-index results)))
                        (function
                         (let ((completing-read-function
-                               (or fasd-completing-read-function
+                               (or function
                                    completing-read-function)))
                           (completing-read prompt results nil t))))
                    (car results))))
