@@ -58,18 +58,18 @@ passed optionally to avoid the prompt."
                                   (read-from-minibuffer "Fasd query: ")
                                 "")))
     (let* ((prompt "Fasd query: ")
+           (grizzlp (equal fasd-completing-read-function 'grizzl-completing-read))
            (results
             (split-string
              (shell-command-to-string
-              (concat "fasd -l" (if prefix " -d " " -a ") query)) "\n" t))
+              (concat "fasd -l" (unless grizzlp " -R ") (if prefix " -d " " -a ") query)) "\n" t))
            (file (if (> (length results) 1)
-                     (pcase fasd-completing-read-function
-                       (`grizzl-completing-read (grizzl-completing-read prompt (grizzl-make-index results)))
-                       (function
-                        (let ((completing-read-function
-                               (or function
-                                   completing-read-function)))
-                          (completing-read prompt results nil t))))
+                     (if grizzlp
+                         (grizzl-completing-read prompt (grizzl-make-index results))
+                       (let ((completing-read-function
+                              (or fasd-completing-read-function
+                                  completing-read-function)))
+                         (completing-read prompt results nil t)))
                    (car results))))
       (if file
           (if (file-readable-p file)
@@ -77,9 +77,7 @@ passed optionally to avoid the prompt."
                   (dired file)
                 (find-file file))
             (message "Directory or file `%s' doesn't exist" file))
-        (message "Fasd found nothing for query `%s'" query)
-        )
-      )))
+        (message "Fasd found nothing for query `%s'" query)))))
 
 ;;;###autoload
 (defun fasd-add-file-to-db ()
