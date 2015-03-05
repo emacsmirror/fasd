@@ -49,8 +49,10 @@ e.g. `ido' explicitly set it to `ido-completing-read'.")
 ;;;###autoload
 (defun fasd-find-file (prefix &optional query)
   "Use fasd to open a file, or a directory with dired.
-If PREFIX is non-nil consider only directories.  QUERY can be
-passed optionally to avoid the prompt."
+If PREFIX is positive consider only directories.
+If PREFIX is -1 consider only files.
+If PREFIX is nil consider files and directories.
+QUERY can be passed optionally to avoid the prompt."
   (interactive "P")
   (if (not (executable-find "fasd"))
       (error "Fasd executable cannot be found.  It is required by `fasd.el'.  Cannot use `fasd-find-file'")
@@ -62,7 +64,14 @@ passed optionally to avoid the prompt."
            (results
             (split-string
              (shell-command-to-string
-              (concat "fasd -l" (unless grizzlp " -R ") (if prefix " -d " " -a ") query)) "\n" t))
+              (concat "fasd -l"
+                      (unless grizzlp " -R ")
+                      (pcase (prefix-numeric-value prefix)
+                        (`-1 "-f")
+                        ((pred (< 1)) " -d ")
+                        (_ " -a "))
+                      query))
+             "\n" t))
            (file (if (> (length results) 1)
                      (if grizzlp
                          (grizzl-completing-read prompt (grizzl-make-index results))
@@ -102,8 +111,7 @@ passed optionally to avoid the prompt."
       (progn (add-hook 'find-file-hook 'fasd-add-file-to-db)
              (add-hook 'dired-mode-hook 'fasd-add-file-to-db))
     (remove-hook 'find-file-hook 'fasd-add-file-to-db)
-    (remove-hook 'dired-mode-hook 'fasd-add-file-to-db))
-  )
+    (remove-hook 'dired-mode-hook 'fasd-add-file-to-db)))
 
 (provide 'fasd)
 ;;; fasd.el ends here

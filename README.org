@@ -69,6 +69,13 @@ Add a shortcut key for =fasd-find-file= and enable the =global-fasd-mode= which 
   (global-fasd-mode 1)
 #+END_SRC
 
+Calling =fasd-find-file= with a prefix argument of
+
+=C-u= lists only directories
+=M--= lists only files
+
+With no prefix it shows files and directories.
+
 **** Options
 
 Use the customize interface:
