@@ -89,3 +89,7 @@ Usually =fasd= will prompt for a initial query. To turn that off and get all res
 ***** Completion Function
 
 The default completion uses =grizzl=. If you want to use =ido=, =helm= or something else, customize =fasd-completing-read-function=.
+
+***** Standard search
+
+By default the =fasd= search parameter is =-a= which searches files and directories, you can customize this with the =fasd-standard-search= option.
