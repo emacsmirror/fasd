@@ -37,14 +37,28 @@
 (defcustom fasd-enable-initial-prompt t
   "Specify whether to enable prompt for the initial query.
 
-When set to nil, all fasd results are returned for completion")
+When set to nil, all fasd results are returned for completion"
+  :type 'boolean)
 
 (defcustom fasd-completing-read-function 'grizzl-completing-read
   "The completion function to use for `fasd' completion.
 Default is `grizzl-completing-read'.  If set to `nil' it will
 fall back to the standard `completing-read-function', which could
 be using `helm' or `ido' depending on what you are using.  To use
-e.g. `ido' explicitly set it to `ido-completing-read'.")
+e.g. `ido' explicitly set it to `ido-completing-read'."
+  :type 'symbol)
+
+(defcustom fasd-standard-search "-a"
+  "`fasd' standard search parameter.
+This parameter is overridden by PREFIX given to `fasd-find-file'
+Fasd has the following options:
+`-a' match files and directories
+`-d' match directories only
+`-f' match files only
+`-r' match by rank only
+`-t' match by recent access only
+to specify multiple flags separate them by spaces, e.g. `-a -r'"
+  :type 'string)
 
 ;;;###autoload
 (defun fasd-find-file (prefix &optional query)
@@ -69,7 +83,7 @@ QUERY can be passed optionally to avoid the prompt."
                       (pcase (prefix-numeric-value prefix)
                         (`-1 "-f")
                         ((pred (< 1)) " -d ")
-                        (_ " -a "))
+                        (_ (concat " " fasd-standard-search " ")))
                       query))
              "\n" t))
            (file (if (> (length results) 1)
