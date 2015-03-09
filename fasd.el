@@ -81,7 +81,7 @@ QUERY can be passed optionally to avoid the prompt."
               (concat "fasd -l"
                       (unless grizzlp " -R ")
                       (pcase (prefix-numeric-value prefix)
-                        (`-1 "-f")
+                        (`-1 " -f ")
                         ((pred (< 1)) " -d ")
                         (_ (concat " " fasd-standard-search " ")))
                       query))
