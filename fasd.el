@@ -110,7 +110,8 @@ QUERY can be passed optionally to avoid the prompt."
     (let ((file (if (string= major-mode "dired-mode")
                     dired-directory
                   (buffer-file-name))))
-      (start-process "*fasd*" nil "fasd" "--add" file))))
+      (when file
+        (start-process "*fasd*" nil "fasd" "--add" file)))))
 
 ;;;###autoload
 (define-minor-mode global-fasd-mode
