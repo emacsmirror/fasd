@@ -3,7 +3,6 @@
 ;; Copyright (C) 2013 steckerhalter
 
 ;; Author: steckerhalter
-;; Package-Requires: ((grizzl "0"))
 ;; URL: https://github.com/steckerhalter/emacs-fasd
 ;; Keywords: cli bash zsh autojump
 
