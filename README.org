@@ -88,7 +88,7 @@ Usually =fasd= will prompt for a initial query. To turn that off and get all res
 
 ***** Completion Function
 
-The default completion uses =grizzl=. If you want to use =ido=, =helm= or something else, customize =fasd-completing-read-function=.
+By default the standard =completing-read-function= will be used, which could be using =helm= or =ido= depending on what you are using. To use e.g. =ido= explicitly set it to =ido-completing-read=. Previously the default was =grizzl-completing-read= but the dependency on =grizzl= has been removed. If you still want to use =grizzl=, you need to install the package and set the =completing-read-function= accordingly.
 
 ***** Standard search
 
