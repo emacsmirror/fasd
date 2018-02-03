@@ -37,6 +37,13 @@
 When set to nil, all fasd results are returned for completion"
   :type 'boolean)
 
+(defcustom fasd-file-manager 'dired
+  "A default set of file managers to use with `fasd-find-file'"
+  :type '(radio
+          (const :tag "Use `dired', default emacs file manager" dired)
+          (const :tag "Use `deer', ranger's file manager" deer)
+          (function :tag "Custom predicate")))
+
 (defcustom fasd-completing-read-function nil
   "The completion function to use for `fasd' completion.
 If set to `nil' it will use the standard
@@ -94,7 +101,7 @@ QUERY can be passed optionally to avoid the prompt."
       (if file
           (if (file-readable-p file)
               (if (file-directory-p file)
-                  (dired file)
+                  (funcall fasd-file-manager file)
                 (find-file file))
             (message "Directory or file `%s' doesn't exist" file))
         (message "Fasd found nothing for query `%s'" query)))))
