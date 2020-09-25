@@ -101,7 +101,7 @@ QUERY can be passed optionally to avoid the prompt."
       (if file
           (if (file-readable-p file)
               (if (file-directory-p file)
-                  (if (fboundp 'ivy-read)
+                  (if (fboundp 'counsel-find-file)
                       (counsel-find-file file)
                     (funcall fasd-file-manager file))
                 (find-file file))
