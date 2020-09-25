@@ -101,7 +101,9 @@ QUERY can be passed optionally to avoid the prompt."
       (if file
           (if (file-readable-p file)
               (if (file-directory-p file)
-                  (funcall fasd-file-manager file)
+                  (if (fboundp 'counsel-find-file)
+                      (counsel-find-file file)
+                    (funcall fasd-file-manager file))
                 (find-file file))
             (message "Directory or file `%s' doesn't exist" file))
         (message "Fasd found nothing for query `%s'" query)))))
