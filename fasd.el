@@ -44,14 +44,6 @@ When set to nil, all fasd results are returned for completion"
           (const :tag "Use `deer', ranger's file manager" deer)
           (function :tag "Custom predicate")))
 
-(defcustom fasd-completing-read-function nil
-  "The completion function to use for `fasd' completion.
-If set to `nil' it will use the standard
-`completing-read-function', which could be using `helm' or `ido'
-depending on what you are using.  To use e.g. `ido' explicitly
-set it to `ido-completing-read'."
-  :type 'symbol)
-
 (defcustom fasd-standard-search "-a"
   "`fasd' standard search parameter.
 This parameter is overridden by PREFIX given to `fasd-find-file'
@@ -63,6 +55,20 @@ Fasd has the following options:
 `-t' match by recent access only
 to specify multiple flags separate them by spaces, e.g. `-a -r'"
   :type 'string)
+
+  (defun fasd-find-file-action (file)
+    (if (file-readable-p file)
+        (if (file-directory-p file)
+            (if (fboundp 'counsel-find-file)
+                (counsel-find-file file)
+              (funcall fasd-file-manager file))
+          (find-file file))
+      (message "Directory or file `%s' doesn't exist" file)))
+
+(when (featurep 'ivy)
+  (ivy-set-actions
+   'fasd-find-file
+   '(("o" fasd-find-file-action "find-file"))))
 
 ;;;###autoload
 (defun fasd-find-file (prefix &optional query)
@@ -78,35 +84,27 @@ QUERY can be passed optionally to avoid the prompt."
                                   (read-from-minibuffer "Fasd query: ")
                                 "")))
     (let* ((prompt "Fasd query: ")
-           (grizzlp (equal fasd-completing-read-function 'grizzl-completing-read))
            (results
             (split-string
              (shell-command-to-string
-              (concat "fasd -l"
-                      (unless grizzlp " -R ")
+              (concat "fasd -l -R"
                       (pcase (prefix-numeric-value prefix)
                         (`-1 " -f ")
                         ((pred (< 1)) " -d ")
                         (_ (concat " " fasd-standard-search " ")))
                       query))
              "\n" t))
-           (file (if (> (length results) 1)
-                     (if grizzlp
-                         (grizzl-completing-read prompt (grizzl-make-index results))
-                       (let ((completing-read-function
-                              (or fasd-completing-read-function
-                                  completing-read-function)))
-                         (completing-read prompt results nil t)))
-                   (car results))))
-      (if file
-          (if (file-readable-p file)
-              (if (file-directory-p file)
-                  (if (fboundp 'counsel-find-file)
-                      (counsel-find-file file)
-                    (funcall fasd-file-manager file))
-                (find-file file))
-            (message "Directory or file `%s' doesn't exist" file))
-        (message "Fasd found nothing for query `%s'" query)))))
+           (file (if (= (length results) 1)
+                     (car results)
+                   ;; set `this-command' to `fasd-find-file' is required because
+                   ;; `read-from-minibuffer' modifies its value, while `ivy-completing-read'
+                   ;; assumes it to be its caller
+                   (setq this-command 'fasd-find-file)
+                   (completing-read prompt results nil t))))
+      (unless (featurep 'ivy)
+        (if file
+            (fasd-find-file-action file)
+          (message "Fasd found nothing for query `%s'" query))))))
 
 ;;;###autoload
 (defun fasd-add-file-to-db ()
