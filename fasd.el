@@ -94,17 +94,16 @@ QUERY can be passed optionally to avoid the prompt."
                         (_ (concat " " fasd-standard-search " ")))
                       query))
              "\n" t))
-           (file (if (= (length results) 1)
-                     (car results)
+           (file (when results
                    ;; set `this-command' to `fasd-find-file' is required because
                    ;; `read-from-minibuffer' modifies its value, while `ivy-completing-read'
                    ;; assumes it to be its caller
                    (setq this-command 'fasd-find-file)
                    (completing-read prompt results nil t))))
-      (unless (featurep 'ivy)
-        (if file
-            (fasd-find-file-action file)
-          (message "Fasd found nothing for query `%s'" query))))))
+        (if (not file)
+            (message "Fasd found nothing for query `%s'" query)
+            (unless (featurep 'ivy)
+              (fasd-find-file-action file))))))
 
 ;;;###autoload
 (defun fasd-add-file-to-db ()
